@@ -73,6 +73,14 @@ You have access to the following projects and can switch between them with 'oc p
 
 Using project "myproject" on server "https://192.168.99.101:8443".
 ```
+##### Maven depedency
+```xml
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-kubernetes</artifactId>
+	<version>0.2.0.RELEASE</version>
+</dependency>
+```
 ##### Configure the Spring Cloud Microservice Maven Project with the Plugin...
 ```xml
      <build>
