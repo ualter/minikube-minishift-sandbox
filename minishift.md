@@ -38,7 +38,9 @@ minishift ip
 eval $(minishift docker-env -u)
 minishift stop
 ```
-## Deploy the OpenShift NodeJs App Sample
+## Deploy
+
+#### Deploy the OpenShift NodeJs App Sample
 ```bash
 oc new-app https://github.com/openshift/nodejs-ex -l name=myapp
 oc logs -f bc/nodejs-ex
@@ -50,7 +52,53 @@ minishift openshift service nodejs-ex --in-browser
 oc delete all -l app=nodejs-ex
 ```
 
-## Create Applications
+#### Using Maven Plugin frabric8
+##### Make sure your are logged with Admin
+```bash
+oc login -u system:admin
+```
+##### Select the project (if not already)
+```bash
+oc projects
+You have access to the following projects and can switch between them with 'oc project <projectname>':
+
+    default
+    kube-public
+    kube-system
+  * myproject - My Project
+    openshift
+    openshift-infra
+    openshift-node
+    openshift-web-console
+
+Using project "myproject" on server "https://192.168.99.101:8443".
+```
+##### Configure the Spring Cloud Microservice Maven Project with the Plugin...
+```xml
+     <build>
+        <plugins>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>fabric8-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>fmp</id>
+                        <goals>
+                            <goal>resource</goal>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+```
+##### Launch the deploy
+```bash
+mvn fabric8:deploy
+```
+
+### Create Applications
 ###### (https://docs.openshift.com/enterprise/3.0/dev_guide/new_app.html)
 ## Using Docker Build Strategy
 ###### (https://docs.openshift.org/latest/architecture/core_concepts/builds_and_image_streams.html#docker-build)
