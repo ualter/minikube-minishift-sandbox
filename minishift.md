@@ -178,9 +178,9 @@ oc tag -d nodeapp:latest
 ```
 #### Maven dependency to use Kubernetes as a Discovery Service (instead of Eureka)
 ```xml
-        <dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-kubernetes</artifactId>
-			<version>0.2.0.RELEASE</version>
-		</dependency>
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-kubernetes</artifactId>
+	<version>0.2.0.RELEASE</version>
+</dependency>
 ```
