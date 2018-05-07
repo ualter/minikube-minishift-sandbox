@@ -1,106 +1,100 @@
-## Minikube
+# Minikube
 
-## Start and Config
-# 
+##### Start and Config
+```bash
 minikube start 
+```
 
-# config (just first time)
+##### Config (just first time)
+```bash
 kubectl config use-context minikube
-
-#
+```
+##### Check...
+```bash
 kubectl cluster-info
-
-#
+```
+##### Dashboard
+```bash
 minikube dashboard
+```
 
-# Because this tutorial uses Minikube, instead of pushing your Docker image to a registry, 
-# you can simply build the image using the same Docker host as the Minikube VM, 
-# so that the images are automatically present. 
-# To do so, make sure you are using the Minikube Docker daemon
+##### Config Docker to use the Docker Daemon of Minikube Installation
+```bash
 eval $(minikube docker-env)
-
-# Note: Later, when you no longer wish to use the Minikube host, 
-# you can undo this change by running:
+```
+##### Get Back the Docker to normal...
+```bash
 eval $(minikube docker-env -u)
+```
 
-
-## Build a Docker Image
-
-# Build any Docker Image to deploy its Container(s) in Minikube Pods
+##### Build any Docker Image to deploy its Container(s) in Minikube Pods
+```bash
 docker build -t hello-node:v1 .
+```
 
-## Deploy a Docker Image 
-# Deploy the NodeJs App
-# Create a Deployment that manages a Pod. The Pod runs a Container based on the image
+##### Deploy a Docker Image 
+```bash
 kubectl run hello-node --image=hello-node:v1 --port=8080
-
-## Other Commands to view Status (Dashboard)
-# 
+```
+##### More...
+```bash
 kubectl get deployments
-#
 kubectl get pods
-#
 kubectl get eventskubectl get events
-#
 kubectl config view
-
-## Create Service
-
-# Expose the Pod the the Public Internet
+```
+##### Create Service
+```bash
 kubectl expose deployment hello-node --type=LoadBalancer
-
-# 
+```
+##### Check it
+```bash
 kubectl get services
-
-# The --type=LoadBalancer flag indicates that you want to expose your Service outside of the cluster.
-# On cloud providers that support load balancers, an external IP address would be provisioned to access the Service. 
-# On Minikube, the LoadBalancer type makes the Service accessible through the minikube service command.
-#
+```
+```bash
 minikube service hello-node (open browser)
 minikube service hello-node --url (the url)
-
-
-#
+```
+##### Logs
+```bash
 kubectl logs <POD-NAME>
-
-
-# Update image of a Deployment (new Image version)
+```
+##### Update image of a Deployment (new Image version)
+```bash
 kubectl set image deployment/hello-node hello-node=hello-node:v2
-
-
-#
+```
+##### Addons
+```bash
 minikube addons list
-
-# Enable addon
+```
+##### Enable Addon
+```bash
 minikube addons enable heapster
-
-# Open Heapster
+```
+##### Open Heapster
+```bash
 minikube addons open heapster
-
-# Show Pods and Services (Info)
+```
+##### Show Pods and Services (Info)
+```bash
 kubectl get po,svc -n kube-system
-
-
-## Clean Up Things
-
-#
+```
+##### Clean Up Things
+```bash
 kubectl delete service hello-node
-#
 kubectl delete deployment hello-node
-
-## Stop Everything!
-#
+```
+##### Stop Everything!
+```bash
 minikube stop
-#
 eval $(minikube docker-env -u)
-
-
-## More...
-
-#
+```
+##### Bash
+```bash
 kubectl exec -ti [pod-name]  bash
 kubectl exec -ti hello-node-6ff6665d75-gmmm2  bash
-
-
-#
+```
+##### Scale
+```bash
 kubectl scale deployment hello-node --replicas=4
+```
