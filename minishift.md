@@ -159,6 +159,10 @@ eval $(minishift docker-env -u)
 ```bash
 oc adm ...
 ```
+#### Get Pod IP
+```bash
+oc get pod chamber-1-qb52n -o wide
+```
 #### Manual Scale
 ```bash
 oc scale dc nodeapp --replicas=3
