@@ -16,7 +16,7 @@ brew info --installed docker-machine-driver-xhyve
 ```bash
 minishift start
 ```
-####### Configure openshift client a the PATH
+###### Configure openshift client a the PATH (or add to the PATH definitively to the ~/.bash_profile)
 ```bash
 eval $(minishift oc-env)
 ```
