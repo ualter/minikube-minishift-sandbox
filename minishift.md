@@ -13,8 +13,10 @@ sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machi
 brew info --installed docker-machine-driver-xhyve
 ```
 ## Start / Config
+```bash
 minishift start
-####### One time, configure openshift client
+```
+####### Configure openshift client a the PATH
 ```bash
 eval $(minishift oc-env)
 ```
