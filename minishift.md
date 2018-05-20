@@ -20,7 +20,7 @@ minishift start
 ```bash
 eval $(minishift oc-env)
 ```
-#### Configure Docker Console with Docker Daemon Minishift
+#### Configure Docker Cµonsole with Docker Daemon Minishift
 ```bash
 eval $(minishift docker-env)
 oc login -u system:admin
@@ -32,6 +32,7 @@ oc login -u system:admin
 ##### IP
 ```bash
 minishift ip
+
 ```
 ## Stop
 ```bash
