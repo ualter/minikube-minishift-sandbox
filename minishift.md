@@ -10,57 +10,61 @@ sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machi
 ```
 #### Check installation
 ```bash
-brew info --installed docker-machine-driver-xhyve
+$ brew info --installed docker-machine-driver-xhyve
 ```
 ## Start / Config
 ```bash
-minishift start
+$ minishift start
+```
+## Update (in case outdated)
+```bash
+$ minishift update
 ```
 ###### Configure openshift client a the PATH (or add to the PATH definitively to the ~/.bash_profile)
 ```bash
-eval $(minishift oc-env)
+$ eval $(minishift oc-env)
 ```
 #### Configure Docker Cµonsole with Docker Daemon Minishift
 ```bash
-eval $(minishift docker-env)
-oc login -u system:admin
+$eval $(minishift docker-env)
+$ oc login -u system:admin
 ```
 ##### Log as Admin
 ```bash
-oc login -u system:admin
+$ oc login -u system:admin
 ```
 ##### IP
 ```bash
-minishift ip
+$ minishift ip
 
 ```
 ## Stop
 ```bash
-eval $(minishift docker-env -u)
-minishift stop
+$ eval $(minishift docker-env -u)
+$ minishift stop
 ```
 ## Deploy
 
 #### Deploy the OpenShift NodeJs App Sample
 ```bash
-oc new-app https://github.com/openshift/nodejs-ex -l name=myapp
-oc logs -f bc/nodejs-ex
-oc expose svc/nodejs-ex
-minishift openshift service nodejs-ex --in-browser
+$ oc new-app https://github.com/openshift/nodejs-ex -l name=myapp
+$ oc logs -f bc/nodejs-ex
+$ oc expose svc/nodejs-ex
+$ minishift openshift service nodejs-ex --in-browser
 ```
 ##### Delete all objects of this deployment
 ```bash
-oc delete all -l app=nodejs-ex
+$ oc delete all -l app=nodejs-ex
 ```
 
 #### Using Maven Plugin frabric8
 ##### Make sure your are logged with Admin
 ```bash
-oc login -u system:admin
+$ oc login -u system:admin
 ```
 ##### Select the project (if not already)
 ```bash
-oc projects
+$ oc projects
 You have access to the following projects and can switch between them with 'oc project <projectname>':
 
     default
@@ -119,75 +123,75 @@ mvn fabric8:deploy
  ```
 #### Update the App (creating a new Image)
 ```bash
-oc start-build nodeapp --from-dir=/Users/ualter/Developer/minikube-minishift/nodeApp/ --follow
+$ oc start-build nodeapp --from-dir=/Users/ualter/Developer/minikube-minishift/nodeApp/ --follow
 ```
 #### Tag the new image
 ```bash
-oc tag nodeapp:latest nodeapp:v2
+$ oc tag nodeapp:latest nodeapp:v2
 ```
 #### Check
 ```bash
-oc logs -f dc/nodeapp 
-oc rollout history dc/nodeapp 
+$ oc logs -f dc/nodeapp 
+$ oc rollout history dc/nodeapp 
 ```
 #### GIT specyfing branch developer
 ```bash
-oc new-app https://github.com/openshift/ruby-hello-world.git#developer
+$ oc new-app https://github.com/openshift/ruby-hello-world.git#developer
 ```
 
 ## More...
 
 #### List Projects
 ```bash
-oc get projects
+$ oc get projects
 ```
 #### List Image Stream
 ```bash
-oc describe is
+$ oc describe is
 ```
 #### List all local templates
 ```bash
-oc new-app --list
+$ oc new-app --list
 ```
 
 #### Delete an App (all its objects)
 ```bash
-oc delete all -l app=nodeapp
+$ oc delete all -l app=nodeapp
 ```
 
 #### Configure Docker Console with Docker Daemon Minishift
 ```bash
-eval $(minishift docker-env)
+$ eval $(minishift docker-env)
 ```
 #### To get back to original the Docker Console
 ```bash
-eval $(minishift docker-env -u)
+$ eval $(minishift docker-env -u)
 ```
 
 #### Administration Options
 ```bash
-oc adm ...
+$ oc adm ...
 ```
 #### Get Pod IP
 ```bash
-oc get pod chamber-1-qb52n -o wide
+$ oc get pod chamber-1-qb52n -o wide
 ```
 #### Manual Scale
 ```bash
-oc scale dc nodeapp --replicas=3
+$ oc scale dc nodeapp --replicas=3
 ```
 #### Deployment Configuration 
 ```bash
-oc get dc nodeapp  -o json
-oc get dc nodeapp  -o json | jq .status
+$ oc get dc nodeapp  -o json
+$ oc get dc nodeapp  -o json | jq .status
 ```
 #### Tags Images
 ```bash
-oc tag nodeapp:latest nodeapp:v2
+$ oc tag nodeapp:latest nodeapp:v2
 ```
 #### Remove
 ```bash
-oc tag -d nodeapp:latest
+$ oc tag -d nodeapp:latest
 ```
 #### Maven dependency to use Kubernetes as a Discovery Service (instead of Eureka)
 ```xml
