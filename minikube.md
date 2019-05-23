@@ -18,6 +18,7 @@ kubectl cluster-info
 minikube dashboard
 ```
 
+### Docker
 ##### Config Docker to use the Docker Daemon of Minikube Installation
 ```bash
 eval $(minikube docker-env)
@@ -26,6 +27,26 @@ eval $(minikube docker-env)
 ```bash
 eval $(minikube docker-env -u)
 ```
+##### Local Docker Register for Kubernetes 
+```bash
+// Login
+ $ docker login
+// Create a local registry, an Instance from Image Docker
+ $ sudo docker run -d -p 5000:5000 --restart=always --name registry registry:2 
+// registering an Image to your local registry
+ $ docker tag front-proxy_service1 localhost:5000/my-service1 
+// Push to the local registry running localhost:5000
+ $ docker push localhost:5000/my-service1
+// Remove the locally-cached and from localhost, so we can try pulling the image from the registry
+ $ docker rmi front-proxy_service1
+ $ docker rmi localhost:5000/my-service1
+// Pull from our Registry
+ $ docker pull localhost:5000/my-service1
+//List Repositories
+ $ curl -s -X GET http://localhost:5000/v2/_catalog | jq .
+// More: https://docs.docker.com/registry/deploying/
+```
+
 
 ##### Build any Docker Image to deploy its Container(s) in Minikube Pods
 ```bash

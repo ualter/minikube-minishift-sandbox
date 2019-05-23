@@ -24,7 +24,7 @@ $ minishift update
 ```bash
 $ eval $(minishift oc-env)
 ```
-#### Configure Docker Cµonsole with Docker Daemon Minishift
+#### Configure Docker Console with Docker Daemon Minishift
 ```bash
 $eval $(minishift docker-env)
 $ oc login -u system:admin
