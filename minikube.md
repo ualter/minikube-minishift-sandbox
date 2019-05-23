@@ -47,6 +47,11 @@ eval $(minikube docker-env -u)
 // More: https://docs.docker.com/registry/deploying/
 ```
 
+##### Config Minikube with the Docker Registry Local
+- kubectl create -f kube-registry.yaml
+- kubectl port-forward --namespace kube-system
+$(kubectl get po -n kube-system | grep kube-registry-v0 | \awk '{print $1;}') 5000:5000
+
 
 ##### Build any Docker Image to deploy its Container(s) in Minikube Pods
 ```bash
