@@ -29,28 +29,48 @@ eval $(minikube docker-env -u)
 ```
 ##### Local Docker Register for Kubernetes 
 ```bash
-// Login
+## Login
  $ docker login
-// Create a local registry, an Instance from Image Docker
- $ sudo docker run -d -p 5000:5000 --restart=always --name registry registry:2 
-// registering an Image to your local registry
- $ docker tag front-proxy_service1 localhost:5000/my-service1 
-// Push to the local registry running localhost:5000
- $ docker push localhost:5000/my-service1
-// Remove the locally-cached and from localhost, so we can try pulling the image from the registry
+
+## Create a local registry, an Instance from Image Docker (see my-registry/docker.compose.yml)
+ $ docker-compose up -d
+
+## In case doing directly... (not recommended)
+ sudo docker run -d -p 5000:5000 --restart=always --name registry registry:latest  
+
+## (At /etc/hosts the register [Your Local IP]  my-registry)
+## The command must already been working
+ $ curl -s http://my-registry:5000/v2/_catalog | jq .
+
+## Registering an Image to your local registry
+ $ docker tag envoy-service1 my-registry:5000/envoy-service1
+
+## Push to the local registry running localhost:5000
+ $ docker push my-registry:5000/envoy-service1
+
+## Remove the locally-cached and from localhost, so we can try pulling the image from the registry
  $ docker rmi front-proxy_service1
  $ docker rmi localhost:5000/my-service1
-// Pull from our Registry
+
+## Pull from our Registry
  $ docker pull localhost:5000/my-service1
-//List Repositories
- $ curl -s -X GET http://localhost:5000/v2/_catalog | jq .
-// More: https://docs.docker.com/registry/deploying/
+
+## check
+$ curl https://my-registry:5000/v2/_catalog
+$ curl https://my-registry:5000/v2/envoy-service1/tags/list
+
+## On the Kubernetes
+ $ minikube ssh
+## Create a ca.crt file for your Self-Signed Certificate at the Kubernetes Linux
+ $ vi sudo /etc/docker/certs.d/my-registry:5000/ca.crt ## and put public Certificate here
+## If still does not work, put the same public Certificate (your self signed) at this file also:
+ $ sudo vi /etc/ssl/certs/ca-certificates.crt
+## Inside the Kubernetes environment should work this command
+ $ docker pull my-registry:5000/envoy-service1
+ 
+## More: https://docs.docker.com/registry/deploying/
 ```
 
-##### Config Minikube with the Docker Registry Local
-- kubectl create -f kube-registry.yaml
-- kubectl port-forward --namespace kube-system
-$(kubectl get po -n kube-system | grep kube-registry-v0 | \awk '{print $1;}') 5000:5000
 
 
 ##### Build any Docker Image to deploy its Container(s) in Minikube Pods
@@ -124,3 +144,7 @@ kubectl exec -ti hello-node-6ff6665d75-gmmm2  bash
 ```bash
 kubectl scale deployment hello-node --replicas=4
 ```
+
+### Extra
+#### Create Self Signed Certificate
+- openssl req -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key -x509 -days 365 -out certs/domain.crt
