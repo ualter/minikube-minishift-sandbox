@@ -28,50 +28,97 @@ eval $(minikube docker-env)
 eval $(minikube docker-env -u)
 ```
 ##### Local Docker Register for Kubernetes 
-```bash
 ## Login
- $ docker login
+```bash
+$ docker login
+```
 
-## Create a local registry, an Instance from Image Docker (see my-registry/docker.compose.yml)
- $ docker-compose up -d
+#### Direct Command specifyng the SSL Certificate, needed to work with Kubernetes. Without the SSL https, the Kubernetes will not access the Registry
+```bash
+ $ sudo docker run -d -p 5000:5000 --restart=always --name my-registry \
+    -v /Users/ualter/Developer/minikube-minishift/my-registry/certs:/certs \
+    -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
+    -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+    registry:2
+```
 
-## In case doing directly... (not recommended)
- sudo docker run -d -p 5000:5000 --restart=always --name registry registry:latest  
-
-## (At /etc/hosts the register [Your Local IP]  my-registry)
-## The command must already been working
+#### (At /etc/hosts the register [Your Local IP]  my-registry)
+#### The command must already been working
+```bash
  $ curl -s http://my-registry:5000/v2/_catalog | jq .
+```
 
-## Registering an Image to your local registry
+#### Registering an Image to your local registry
+```bash
  $ docker tag envoy-service1 my-registry:5000/envoy-service1
+ ```
 
-## Push to the local registry running localhost:5000
+#### Push to the local registry running localhost:5000
+```bash
  $ docker push my-registry:5000/envoy-service1
+ ```
 
-## Remove the locally-cached and from localhost, so we can try pulling the image from the registry
+#### Remove the locally-cached and from localhost, so we can try pulling the image from the registry
+```bash
  $ docker rmi front-proxy_service1
  $ docker rmi localhost:5000/my-service1
+ ```
 
-## Pull from our Registry
+#### Pull from our Registry
+```bash
  $ docker pull localhost:5000/my-service1
-
-## check
+#### Check
 $ curl https://my-registry:5000/v2/_catalog
 $ curl https://my-registry:5000/v2/envoy-service1/tags/list
-
-## On the Kubernetes
- $ minikube ssh
-## Create a ca.crt file for your Self-Signed Certificate at the Kubernetes Linux
- $ vi sudo /etc/docker/certs.d/my-registry:5000/ca.crt ## and put public Certificate here
-## If still does not work, put the same public Certificate (your self signed) at this file also:
- $ sudo vi /etc/ssl/certs/ca-certificates.crt
-## Inside the Kubernetes environment should work this command
- $ docker pull my-registry:5000/envoy-service1
- 
 ## More: https://docs.docker.com/registry/deploying/
 ```
 
+## On the Kubernetes
+```bash
+ $ minikube ssh
+ ```
+#### Create a ca.crt file for your Self-Signed Certificate at the Kubernetes Linux
+```bash
+ $ vi sudo /etc/docker/certs.d/my-registry:5000/ca.crt ## and put public Certificate here
+ ```
+#### If still does not work, put the same public Certificate (your self signed) at this file also:
+ $ sudo vi /etc/ssl/certs/ca-certificates.crt
+#### Inside the Kubernetes environment should work this command
+```bash
+ $ docker pull my-registry:5000/envoy-service1
+ ```
 
+#### Copy Files to Minikube
+```bash
+sudo scp -i $(minikube ssh-key) service-envoy.yaml docker@$(minikube ip):/Users/ualter
+```
+
+#### Deploy to Kubernetes
+```bash
+$ kubectl create deployment envoy-service1 --image=my-registry:5000/envoy-service1
+## or
+$ kubectl apply -f deployment-service1.yaml
+```
+
+#### Create a Service (LoadBalancer type) from the Deployment (Do not work on Minikube)
+```bash
+$ kubectl expose deployment/service1-deployment --type=LoadBalancer --name=service1
+```
+
+#### Create a Service (NodePort type) from the Deployment
+```bash
+$ kubectl expose deployment/service1-deployment --type=NodePort --name=service1
+## To acces it:
+## 1. Get the NodeIp:
+$ kubectl cluster-info
+kubernetes master is running at https://192.168.99.100:8443 #grab the IP, 192.168.99.100
+## 2. Get the Service NodePort
+$ kubectl get svc -o wide #grab the NodePort
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE       SELECTOR
+service1     NodePort    10.97.139.199   <none>        80:30532/TCP   7m        app=service1 #here it is the 30352
+## 3. So...
+$ curl -v http://192.168.99.100:30352/service/1
+```
 
 ##### Build any Docker Image to deploy its Container(s) in Minikube Pods
 ```bash
@@ -147,4 +194,21 @@ kubectl scale deployment hello-node --replicas=4
 
 ### Extra
 #### Create Self Signed Certificate
+```bash
 - openssl req -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key -x509 -days 365 -out certs/domain.crt
+```
+
+#### Copy file to Minikube
+```bash
+$ sudo scp -i $(minikube ssh-key) service-envoy.yaml docker@$(minikube ip):/Users/ualter
+```
+##### In case Error:
+```bash
+$ ECDSA host key for 192.168.99.100 has changed and you have requested strict checking.
+Host key verification failed.
+lost connection
+```
+##### Run to fix it:
+```bash
+sudo ssh-keygen -R 192.168.99.100
+```
