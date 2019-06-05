@@ -73,7 +73,7 @@ $ curl https://my-registry:5000/v2/envoy-service1/tags/list
 ## More: https://docs.docker.com/registry/deploying/
 ```
 
-## On the Kubernetes
+## At Kubernetes
 ```bash
  $ minikube ssh
  ```
@@ -107,6 +107,10 @@ $ kubectl expose deployment/service1-deployment --type=LoadBalancer --name=servi
 
 #### Create a Service (NodePort type) from the Deployment
 ```bash
+## To access through FrontService using Ingress (instruction down below): expose the Service 1 and 2 without NodePort, this manner, as it won't exist NodePort for them, the only way to access Service 1 and 2 will be through the FrontProxy Envoy 
+$ kubectl expose deployment/frontservice-deployment --name=frontservice
+
+## To access directly the Service (using NodePort) without Ingress configuration
 $ kubectl expose deployment/service1-deployment --type=NodePort --name=service1
 ## To acces it:
 ## 1. Get the NodeIp:
@@ -211,4 +215,21 @@ lost connection
 ##### Run to fix it:
 ```bash
 sudo ssh-keygen -R 192.168.99.100
+```
+
+### Using Ingress on Minikube (exposing the Service outside the cluster)
+##### Create the Ingress (The Services must already exist with NodePort)
+```bash
+$ kubectl apply -f ingress.yaml
+# Describe it (check what was configured)
+$ kubectl describe ing ingressservices
+```
+##### Don't forget: on /etc/hosts the entry
+```bash
+192.168.99.100	minikube.ujr  ## The IP of the minikube $(minikube ip)
+```
+##### Calling Service1 and Service2 throughout the Ingress and FrontService (envoy proxy) will be done this way:
+```bash
+$ curl -v http://minikube.ujr/service/1
+$ curl -v http://minikube.ujr/service/2
 ```
