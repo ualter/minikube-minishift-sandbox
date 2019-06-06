@@ -233,3 +233,33 @@ $ kubectl describe ing ingressservices
 $ curl -v http://minikube.ujr/service/1
 $ curl -v http://minikube.ujr/service/2
 ```
+
+### Grafana
+#### Enable services
+```bash
+$ minikube addons open heapster
+```
+
+#### URL address of grafana
+```bash
+$ minikube addons open heapster
+$ minikube service list
+|-------------|----------------------|-----------------------------|
+|  NAMESPACE  |         NAME         |             URL             |
+|-------------|----------------------|-----------------------------|
+| default     | frontservice         | No node port                |
+| default     | kubernetes           | No node port                |
+| default     | service1             | No node port                |
+| default     | service2             | No node port                |
+| kube-system | default-http-backend | http://192.168.99.100:30001 |
+| kube-system | heapster             | No node port                |
+| kube-system | kube-dns             | No node port                |
+| kube-system | kube-registry        | No node port                |
+| kube-system | monitoring-grafana   | http://192.168.99.100:30002 |
+| kube-system | kubernetes-dashboard | http://192.168.99.100:30000 |
+| kube-system | monitoring-influxdb  | No node port                |
+| kube-system | registry             | No node port                |
+|-------------|----------------------|-----------------------------|
+## In this case: http://192.168.99.100:30002
+```
+
