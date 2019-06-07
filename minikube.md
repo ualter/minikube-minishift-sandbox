@@ -263,3 +263,10 @@ $ minikube service list
 ## In this case: http://192.168.99.100:30002
 ```
 
+### Logs of Ingress Controller (NGINX)
+```bash
+$ kubectl logs -f --tail=10  -n kube-system nginx-ingress-controller-586cdc477c-lhfk4
+
+### Where the nginx-ingress-controller-586cdc477c-lhfk4 is the Pod of the NGINX controller, to ge it:
+$ kubectl get pods -n kube-system
+```
