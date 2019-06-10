@@ -270,3 +270,9 @@ $ kubectl logs -f --tail=10  -n kube-system nginx-ingress-controller-586cdc477c-
 ### Where the nginx-ingress-controller-586cdc477c-lhfk4 is the Pod of the NGINX controller, to ge it:
 $ kubectl get pods -n kube-system
 ```
+
+
+### Deploy DashBoard UI Kubernetes
+```bash
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
+```
