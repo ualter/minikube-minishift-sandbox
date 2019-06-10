@@ -276,3 +276,56 @@ $ kubectl get pods -n kube-system
 ```bash
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
 ```
+
+### Install Helm
+```bash
+$ curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
+$ chmod +x get_helm.sh
+$ ./get_helm.sh
+## Wait! Do not run the helm init YET!! Let's still configure the Service Account with the proper Role Access
+```
+#### Creating the Service Account  Tiller for Helm (4 steps)
+##### 1.
+```bash
+cat <<EoF > rbac.yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tiller
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system
+EoF
+```
+##### 2.
+```bash
+kubectl apply -f rbac.yaml
+```
+##### 3.
+```bash
+helm init --service-account tiller
+```
+
+## Helm 
+### Some commands
+```bash
+$ helm search
+$ helm search nginx
+# Add new repository
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+# Using a Helm's Chart to Installing a NGINX WebServer at K8s
+$ helm install --name mywebserver bitnami/nginx
+
+```
