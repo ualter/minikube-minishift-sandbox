@@ -319,13 +319,65 @@ helm init --service-account tiller
 ```
 
 ## Helm 
-### Some commands
 ```bash
+# Update the Helm Repo
+$ helm repo update
+$ helm search
+$ helm search nginx
+# Add more Repo
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+$ helm search bitnami
+# Run a Helm Chart (Configure every K8s object necessary: Deployment, Service, Pods, etc. - The Automation)
+$ helm install --name mywebserver bitnami/nginx
+
+$ helm list
+# To CleanUp
+$ helm delete --purge mywebserver
 $ helm search
 $ helm search nginx
 # Add new repository
 $ helm repo add bitnami https://charts.bitnami.com/bitnami
 # Using a Helm's Chart to Installing a NGINX WebServer at K8s
 $ helm install --name mywebserver bitnami/nginx
+```
+
+### Install Istio using Helm
+```bash
+# Download and Install Istio Command CLI
+$ curl -L https://git.io/getLatestIstio | sh -
+$ cd istio-*
+$ sudo mv -v bin/istioctl /usr/local/bin/
+# Create the Tiller Service Account at K8s
+$ kubectl apply -f install/kubernetes/helm/helm-service-account.yaml
+# Install it enabling Grafana
+$ helm install install/kubernetes/helm/istio --name istio --namespace istio-system --set grafana.enabled=true
+# Check
+$ kubectl get svc -n istio-system
+$ kubectl get pods -n istio-system
+# Deploy Samples (Bookinfo)
+$ kubectl apply -f <(istioctl kube-inject -f samples/bookinfo/platform/kube/bookinfo.yaml)
+$ kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+# Get DNS URL to Access the Sample
+$ kubectl get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' -n istio-system ; echo
+# Change Routing Rules
+$ kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
+$ kubectl get destinationrules -o yaml
+
+# Setting Up Grafana / Prometheus
+$ curl -LO https://eksworkshop.com/servicemesh/deploy.files/istio-telemetry.yaml
+$ kubectl apply -f istio-telemetry.yaml
+#Check if the services are OK
+$ kubectl -n istio-system get svc prometheus
+$ kubectl -n istio-system get svc grafana
+#Port Forwarding for grafana
+kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=grafana -o jsonpath='{.items[0].metadata.name}') 8080:3000 &
+
+# Generating some calls to check at Grafana
+$ export SMHOST=$(kubectl get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname} ' -n istio-system)
+
+$ SMHOST="$(echo -e "${SMHOST}" | tr -d '[:space:]')"
+
+$ while true; do curl -o /dev/null -s "${SMHOST}/productpage"; done
 
 ```
+
