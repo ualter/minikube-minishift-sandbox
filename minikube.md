@@ -80,9 +80,11 @@ $ curl https://my-registry:5000/v2/envoy-service1/tags/list
 #### Create a ca.crt file for your Self-Signed Certificate at the Kubernetes Linux
 ```bash
  $ vi sudo /etc/docker/certs.d/my-registry:5000/ca.crt ## and put public Certificate here
- ```
-#### If still does not work, put the same public Certificate (your self signed) at this file also:
+ 
+ # Put the same public Certificate (your self signed)
  $ sudo vi /etc/ssl/certs/ca-certificates.crt
+ ```
+ 
 #### Inside the Kubernetes environment should work this command
 ```bash
  $ docker pull my-registry:5000/envoy-service1
