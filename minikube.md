@@ -68,8 +68,8 @@ $ docker login
 ```bash
  $ docker pull localhost:5000/my-service1
 #### Check
-$ curl https://my-registry:5000/v2/_catalog
-$ curl https://my-registry:5000/v2/envoy-service1/tags/list
+$ curl -k https://my-registry:5000/v2/_catalog
+$ curl -k https://my-registry:5000/v2/envoy-service1/tags/list
 ## More: https://docs.docker.com/registry/deploying/
 ```
 
