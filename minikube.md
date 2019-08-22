@@ -45,7 +45,7 @@ $ docker login
 #### (At /etc/hosts the register [Your Local IP]  my-registry)
 #### The command must already been working
 ```bash
- $ curl -s http://my-registry:5000/v2/_catalog | jq .
+ $ curl -ks https://my-registry:5000/v2/_catalog | jq .
 ```
 
 #### Registering an Image to your local registry
