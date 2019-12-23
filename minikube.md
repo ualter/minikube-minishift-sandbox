@@ -4,6 +4,10 @@
 ```bash
 minikube start 
 ```
+##### List Pods of Services
+```bash
+kubectl get endpoints --namespace kube-system
+```
 
 ##### Config (just first time)
 ```bash
